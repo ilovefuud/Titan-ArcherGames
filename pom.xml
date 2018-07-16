@@ -10,6 +10,12 @@
 
     <name>KitPvP</name>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.build.timestamp.format>MM-dd-yyyy</maven.build.timestamp.format>
+        <full.version>${project.version}-${maven.build.timestamp}</full.version>
+    </properties>
+
     <distributionManagement>
         <repository>
             <id>lemin-releases</id>
@@ -49,7 +55,7 @@
 
     <build>
         <defaultGoal>clean package</defaultGoal>
-        <finalName>${project.name}</finalName>
+        <finalName>${project.name</finalName>
 
         <resources>
             <resource>
@@ -81,28 +87,6 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>pl.project13.maven</groupId>
-                <artifactId>git-commit-id-plugin</artifactId>
-                <version>2.2.4</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>revision</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <commitIdGenerationMode>flat</commitIdGenerationMode>
-                    <abbrevLength>8</abbrevLength>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.build.timestamp.format>MM-dd-yyyy</maven.build.timestamp.format>
-        <full.version>${project.version}-${git.commit.id.abbrev}-${maven.build.timestamp}</full.version>
-    </properties>
 </project>
