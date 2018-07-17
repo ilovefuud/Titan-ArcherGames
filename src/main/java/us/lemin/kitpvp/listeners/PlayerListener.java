@@ -43,7 +43,7 @@ public class PlayerListener implements Listener {
         Player player = event.getPlayer();
 
         player.sendMessage(CC.SEPARATOR);
-        player.sendMessage(CC.PRIMARY + "Welcome to " + CC.SECONDARY + " Lemin KitPvP" + CC.PRIMARY + "!");
+        player.sendMessage(CC.PRIMARY + "Welcome to " + CC.SECONDARY + "Lemin KitPvP" + CC.PRIMARY + "!");
         player.sendMessage(CC.SEPARATOR);
     }
 }
