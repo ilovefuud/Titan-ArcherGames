@@ -1,17 +1,16 @@
 package us.lemin.kitpvp.listeners;
 
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
+import us.lemin.core.utils.message.CC;
 import us.lemin.kitpvp.KitPvPPlugin;
 import us.lemin.kitpvp.player.PlayerKitProfile;
-
-import java.util.UUID;
 
 @RequiredArgsConstructor
 public class PlayerListener implements Listener {
@@ -31,7 +30,7 @@ public class PlayerListener implements Listener {
         PlayerKitProfile profile = plugin.getProfileManager().getProfile(id);
 
         if (profile == null) {
-            event.disallow(PlayerLoginEvent.Result.KICK_OTHER, ChatColor.RED + "Your data failed to load for KitPvP. Try logging in again.");
+            event.disallow(PlayerLoginEvent.Result.KICK_OTHER, CC.RED + "Your data failed to load for KitPvP. Try logging in again.");
             return;
         } else if (event.getResult() != PlayerLoginEvent.Result.ALLOWED) {
             plugin.getProfileManager().removeProfile(id);
@@ -43,8 +42,8 @@ public class PlayerListener implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
-        player.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "--------------------");
-        player.sendMessage(ChatColor.YELLOW + "Welcome to " + ChatColor.GOLD + " Lemin KitPvP" + ChatColor.YELLOW + "!");
-        player.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "--------------------");
+        player.sendMessage(CC.SEPARATOR);
+        player.sendMessage(CC.PRIMARY + "Welcome to " + CC.SECONDARY + " Lemin KitPvP" + CC.PRIMARY + "!");
+        player.sendMessage(CC.SEPARATOR);
     }
 }

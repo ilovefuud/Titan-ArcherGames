@@ -1,12 +1,11 @@
 package us.lemin.kitpvp.managers;
 
-import lombok.RequiredArgsConstructor;
-import us.lemin.kitpvp.KitPvPPlugin;
-import us.lemin.kitpvp.player.PlayerKitProfile;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import lombok.RequiredArgsConstructor;
+import us.lemin.kitpvp.KitPvPPlugin;
+import us.lemin.kitpvp.player.PlayerKitProfile;
 
 @RequiredArgsConstructor
 public class ProfileManager {
