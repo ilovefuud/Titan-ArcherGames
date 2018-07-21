@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.entity.Player;
 import us.lemin.kitpvp.KitPvPPlugin;
 import us.lemin.kitpvp.player.PlayerKitProfile;
 
@@ -17,11 +18,11 @@ public class ProfileManager {
         profiles.put(id, profile);
     }
 
-    public PlayerKitProfile getProfile(UUID id) {
-        return profiles.get(id);
+    public PlayerKitProfile getProfile(Player player) {
+        return profiles.get(player.getUniqueId());
     }
 
-    public void removeProfile(UUID id) {
-        profiles.remove(id);
+    public void removeProfile(Player player) {
+        profiles.remove(player.getUniqueId());
     }
 }
