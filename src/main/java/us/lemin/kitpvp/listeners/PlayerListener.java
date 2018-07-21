@@ -6,11 +6,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import us.lemin.core.utils.message.CC;
+import us.lemin.core.utils.player.PlayerUtil;
 import us.lemin.kitpvp.KitPvPPlugin;
 import us.lemin.kitpvp.player.PlayerKitProfile;
 
@@ -43,6 +45,9 @@ public class PlayerListener implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
+        PlayerUtil.clearPlayer(player);
+        player.teleport(player.getWorld().getSpawnLocation());
+
         player.sendMessage(CC.SEPARATOR);
         player.sendMessage(CC.PRIMARY + "Welcome to " + CC.SECONDARY + "Lemin KitPvP" + CC.PRIMARY + "!");
         player.sendMessage(CC.SEPARATOR);
@@ -50,7 +55,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onSoup(PlayerInteractEvent event) {
-        if (event.hasItem() || event.getItem().getType() != Material.MUSHROOM_SOUP) {
+        if (!event.hasItem() || event.getItem().getType() != Material.MUSHROOM_SOUP) {
             return;
         }
 
@@ -69,6 +74,15 @@ public class PlayerListener implements Listener {
             player.setHealth(health > 20.0 ? 20.0 : health);
             player.getItemInHand().setType(Material.BOWL);
             player.updateInventory();
+        }
+    }
+
+    @EventHandler
+    public void onHunger(FoodLevelChangeEvent event) {
+        if (event.getFoodLevel() < 20) {
+            event.setFoodLevel(20);
+        } else {
+            event.setCancelled(true);
         }
     }
 }

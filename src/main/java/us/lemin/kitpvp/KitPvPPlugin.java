@@ -10,19 +10,22 @@ import org.bukkit.plugin.java.JavaPlugin;
 import us.lemin.kitpvp.commands.KitCommand;
 import us.lemin.kitpvp.commands.StatisticsCommand;
 import us.lemin.kitpvp.listeners.PlayerListener;
+import us.lemin.kitpvp.managers.KitManager;
 import us.lemin.kitpvp.managers.ProfileManager;
 
 @Getter
 public class KitPvPPlugin extends JavaPlugin {
     private ProfileManager profileManager;
+    private KitManager kitManager;
 
     @Override
     public void onEnable() {
         profileManager = new ProfileManager(this);
+        kitManager = new KitManager(this);
 
         registerCommands(
                 new StatisticsCommand(this),
-                new KitCommand()
+                new KitCommand(this)
         );
         registerListeners(
                 new PlayerListener(this)
