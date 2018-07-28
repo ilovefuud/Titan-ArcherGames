@@ -6,6 +6,8 @@ import lombok.Setter;
 import us.lemin.core.CorePlugin;
 import us.lemin.core.player.CoreProfile;
 import us.lemin.core.storage.database.MongoRequest;
+import us.lemin.core.utils.timer.Timer;
+import us.lemin.core.utils.timer.impl.DoubleTimer;
 import us.lemin.kitpvp.KitPvPPlugin;
 import us.lemin.kitpvp.kit.Kit;
 
@@ -18,6 +20,8 @@ public class PlayerKitProfile {
     private final PlayerDamageData damageData = new PlayerDamageData();
     @Getter
     private final PlayerStatistics statistics = new PlayerStatistics();
+    @Getter
+    private final Timer pearlTimer = new DoubleTimer(16);
     @Getter
     @Setter
     private PlayerState state = PlayerState.SPAWN;

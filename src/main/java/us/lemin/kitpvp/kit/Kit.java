@@ -52,6 +52,10 @@ public abstract class Kit implements Listener {
         profile.setKit(this);
         contents.apply(player);
 
+        for (PotionEffect effect : player.getActivePotionEffects()) {
+            player.removePotionEffect(effect.getType());
+        }
+
         for (PotionEffect effect : effects()) {
             player.addPotionEffect(effect);
         }

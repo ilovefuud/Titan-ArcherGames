@@ -1,12 +1,16 @@
 package us.lemin.kitpvp.listeners;
 
 import lombok.RequiredArgsConstructor;
+import org.bukkit.GameMode;
+import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
 import us.lemin.core.utils.message.CC;
+import us.lemin.core.utils.timer.Timer;
 import us.lemin.kitpvp.KitPvPPlugin;
 import us.lemin.kitpvp.player.PlayerKitProfile;
 import us.lemin.kitpvp.player.PlayerState;
@@ -14,6 +18,31 @@ import us.lemin.kitpvp.player.PlayerState;
 @RequiredArgsConstructor
 public class EntityListener implements Listener {
     private final KitPvPPlugin plugin;
+
+    @EventHandler
+    public void onShoot(ProjectileLaunchEvent event) {
+        if (!(event.getEntity().getShooter() instanceof Player)) {
+            return;
+        }
+
+        Player player = (Player) event.getEntity().getShooter();
+
+        if (player.getGameMode() != GameMode.SURVIVAL) {
+            return;
+        }
+
+        PlayerKitProfile profile = plugin.getPlayerManager().getProfile(player);
+
+        if (profile.getState() != PlayerState.FFA) {
+            return;
+        }
+
+        if (event.getEntity() instanceof EnderPearl) {
+            Timer timer = profile.getPearlTimer();
+
+            timer.isActive(); // check active
+        }
+    }
 
     @EventHandler
     public void onPlayerDamage(EntityDamageEvent event) {

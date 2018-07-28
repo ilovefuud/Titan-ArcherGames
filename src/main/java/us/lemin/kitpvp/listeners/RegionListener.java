@@ -72,10 +72,10 @@ public class RegionListener implements Listener {
 
         if (!plugin.getSpawnCuboid().contains(to)) {
             plugin.getPlayerManager().loseSpawnProtection(player);
-        }
 
-        if (profile.isAwaitingTeleport()) {
-            profile.setAwaitingTeleport(false);
+            if (profile.getKit() == null) {
+                plugin.getKitManager().getKitByName("PvP").apply(player);
+            }
         }
     }
 
