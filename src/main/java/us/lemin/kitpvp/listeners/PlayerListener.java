@@ -1,19 +1,26 @@
 package us.lemin.kitpvp.listeners;
 
+import java.util.Map;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import us.lemin.core.utils.message.CC;
 import us.lemin.core.utils.player.PlayerUtil;
 import us.lemin.kitpvp.KitPvPPlugin;
+import us.lemin.kitpvp.player.PlayerDamageData;
 import us.lemin.kitpvp.player.PlayerKitProfile;
 
 @RequiredArgsConstructor
@@ -46,6 +53,7 @@ public class PlayerListener implements Listener {
         Player player = event.getPlayer();
 
         PlayerUtil.clearPlayer(player);
+
         player.teleport(player.getWorld().getSpawnLocation());
 
         player.sendMessage(CC.SEPARATOR);
@@ -54,14 +62,22 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
+        PlayerKitProfile profile = plugin.getProfileManager().getProfile(player);
+
+        profile.save(plugin);
+    }
+
+    @EventHandler
+    public void onClick(PlayerInteractEvent event) {
+
+    }
+
+    @EventHandler
     public void onSoup(PlayerInteractEvent event) {
-        if (!event.hasItem() || event.getItem().getType() != Material.MUSHROOM_SOUP) {
-            return;
-        }
-
-        Action action = event.getAction();
-
-        if (action != Action.RIGHT_CLICK_AIR && action != Action.RIGHT_CLICK_BLOCK) {
+        if (!event.hasItem() || event.getItem().getType() != Material.MUSHROOM_SOUP
+                || event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK) {
             return;
         }
 
@@ -84,5 +100,48 @@ public class PlayerListener implements Listener {
         } else {
             event.setCancelled(true);
         }
+    }
+
+    @EventHandler
+    public void onDrop(PlayerDropItemEvent event) {
+        Player player = event.getPlayer();
+
+        if (player.getGameMode() != GameMode.CREATIVE) {
+            if (event.getItemDrop().getItemStack().getType() != Material.BOWL) {
+                event.setCancelled(true);
+                return;
+            }
+
+            event.getItemDrop().remove();
+        }
+    }
+
+    @EventHandler
+    public void onDeath(PlayerDeathEvent event) {
+        event.getDrops().clear();
+
+        Player player = event.getEntity();
+        PlayerKitProfile profile = plugin.getProfileManager().getProfile(player);
+        PlayerDamageData damageData = profile.getDamageData();
+        double totalDamage = damageData.total();
+        player.sendMessage(totalDamage + "");
+
+        for (Map.Entry<UUID, Double> entry : damageData.sortedMap().entrySet()) {
+            UUID damagerId = entry.getKey();
+            Player damager = plugin.getServer().getPlayer(damagerId);
+            double damage = entry.getValue();
+            double percent = damage / totalDamage;
+            damager.sendMessage("you did " + percent + "of dmg to player");
+        }
+        damageData.clear();
+
+        profile.getStatistics().handleDeath();
+        profile.setKit(null);
+
+        plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+            if (player.isOnline()) {
+                player.spigot().respawn();
+            }
+        }, 16L);
     }
 }

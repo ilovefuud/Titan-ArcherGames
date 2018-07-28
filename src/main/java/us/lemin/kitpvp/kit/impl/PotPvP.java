@@ -13,9 +13,9 @@ import us.lemin.kitpvp.KitPvPPlugin;
 import us.lemin.kitpvp.kit.Kit;
 import us.lemin.kitpvp.kit.KitContents;
 
-public class PvP extends Kit {
-    public PvP(KitPvPPlugin plugin) {
-        super(plugin, "PvP", Material.DIAMOND_SWORD, "The standard PvP kit.");
+public class PotPvP extends Kit {
+    public PotPvP(KitPvPPlugin plugin) {
+        super(plugin, "PotPvP", new ItemBuilder(Material.POTION).durability(16421).build(), "The standard PvP kit - potion style.");
     }
 
     @Override
@@ -25,7 +25,7 @@ public class PvP extends Kit {
 
     @Override
     public List<PotionEffect> effects() {
-        return Collections.singletonList(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 0));
+        return Collections.singletonList(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 1));
     }
 
     @Override
@@ -33,12 +33,13 @@ public class PvP extends Kit {
         KitContents.Builder builder = KitContents.newBuilder();
 
         builder.addItem(new ItemBuilder(Material.DIAMOND_SWORD).enchant(Enchantment.DAMAGE_ALL, 1).build());
-        builder.fill(new ItemStack(Material.MUSHROOM_SOUP));
+        builder.addItem(new ItemStack(Material.ENDER_PEARL, 16));
+        builder.fill(new ItemBuilder(Material.POTION).durability(16421).build());
         builder.addArmor(
-                new ItemStack(Material.IRON_BOOTS),
-                new ItemStack(Material.IRON_LEGGINGS),
-                new ItemStack(Material.IRON_CHESTPLATE),
-                new ItemStack(Material.IRON_HELMET)
+                new ItemBuilder(Material.IRON_BOOTS).enchant(Enchantment.PROTECTION_ENVIRONMENTAL, 2).build(),
+                new ItemBuilder(Material.IRON_LEGGINGS).enchant(Enchantment.PROTECTION_ENVIRONMENTAL, 2).build(),
+                new ItemBuilder(Material.IRON_CHESTPLATE).enchant(Enchantment.PROTECTION_ENVIRONMENTAL, 2).build(),
+                new ItemBuilder(Material.IRON_HELMET).enchant(Enchantment.PROTECTION_ENVIRONMENTAL, 2).build()
         );
 
         return builder;

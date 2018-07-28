@@ -69,6 +69,7 @@ public class Cuboid implements Iterable<Block>, Cloneable, ConfigurationSerializ
         this.x1 = (Integer) map.get("x1");
         this.x2 = (Integer) map.get("x2");
         this.y1 = (Integer) map.get("y1");
+
         this.y2 = (Integer) map.get("y2");
         this.z1 = (Integer) map.get("z1");
         this.z2 = (Integer) map.get("z2");

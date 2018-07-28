@@ -1,13 +1,15 @@
 package us.lemin.kitpvp.player;
 
 import lombok.Getter;
+import lombok.Setter;
 
 public class PlayerStatistics {
     @Getter
-    private int kills, deaths, killStreak, highestKillStreak, credits, eventWins;
+    @Setter
+    private int kills, deaths, killStreak, highestKillStreak, pesos, eventWins;
 
     public double getKillDeathRatio() {
-        return deaths == 0 ? kills : (double) kills / deaths;
+        return kills == 0 ? 0.0 : deaths == 0 ? kills : Math.round(((double) kills / deaths) * 10.0) / 10.0;
     }
 
     public boolean handleDeath() {

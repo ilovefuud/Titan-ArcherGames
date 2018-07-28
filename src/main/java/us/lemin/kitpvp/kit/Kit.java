@@ -1,47 +1,68 @@
 package us.lemin.kitpvp.kit;
 
+import java.util.List;
+import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
 import us.lemin.core.utils.item.ItemBuilder;
 import us.lemin.core.utils.message.CC;
+import us.lemin.kitpvp.KitPvPPlugin;
+import us.lemin.kitpvp.player.PlayerKitProfile;
 
 public abstract class Kit implements Listener {
+    protected final KitPvPPlugin plugin;
+    @Getter
     private final String name;
+    @Getter
     private final ItemStack icon;
     private final KitContents contents;
 
-    public Kit(JavaPlugin plugin, String name, Material icon, String... description) {
+    public Kit(KitPvPPlugin plugin, String name, ItemStack icon, String... description) {
+        this.plugin = plugin;
         this.name = name;
-        this.icon = new ItemBuilder(icon).name(CC.ACCENT + name).lore(description).build();
-        this.contents = getContents().build();
+
+        ItemBuilder builder = ItemBuilder.from(icon);
+        String[] coloredDescription = new String[description.length];
+
+        for (int i = 0; i < description.length; i++) {
+            coloredDescription[i] = CC.PRIMARY + description[i];
+        }
+
+        this.icon = builder.name(CC.SECONDARY + name).lore(coloredDescription).build();
+        this.contents = contentsBuilder().build();
+
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
-    public final String getName() {
-        return name;
+    public Kit(KitPvPPlugin plugin, String name, Material icon, String... description) {
+        this(plugin, name, new ItemStack(icon), description);
     }
 
-    public final ItemStack getIcon() {
-        return icon;
+    protected boolean checkPlayer(Player player) {
+        PlayerKitProfile profile = plugin.getProfileManager().getProfile(player);
+        return profile.getKit() == this;
     }
 
     public void apply(Player player) {
-        PlayerInventory inventory = player.getInventory();
+        PlayerKitProfile profile = plugin.getProfileManager().getProfile(player);
 
-        inventory.setArmorContents(contents.getArmor());
-        inventory.setContents(contents.getContents());
+        profile.setKit(this);
+        contents.apply(player);
+
+        for (PotionEffect effect : effects()) {
+            player.addPotionEffect(effect);
+        }
 
         onEquip(player);
-
-        player.updateInventory();
         player.sendMessage(CC.PRIMARY + "You have equipped the " + CC.SECONDARY + name + CC.PRIMARY + " kit.");
     }
 
     protected abstract void onEquip(Player player);
 
-    protected abstract ContentsBuilder getContents();
+    public abstract List<PotionEffect> effects();
+
+    protected abstract KitContents.Builder contentsBuilder();
 }

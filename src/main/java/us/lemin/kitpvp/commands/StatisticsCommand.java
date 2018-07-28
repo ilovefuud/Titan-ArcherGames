@@ -24,17 +24,17 @@ public class StatisticsCommand extends PlayerCommand {
             player.sendMessage(CC.RED + "Player not found."); // TODO: offline stats lookup
         } else {
             PlayerKitProfile targetProfile = plugin.getProfileManager().getProfile(target);
-            PlayerStatistics targetStatistics = targetProfile.getStatistics();
+            PlayerStatistics targetStats = targetProfile.getStatistics();
 
             player.sendMessage(CC.SEPARATOR);
             player.sendMessage(CC.SECONDARY + "Statistics of " + target.getDisplayName());
-            player.sendMessage(CC.PRIMARY + "Kills: " + CC.SECONDARY + targetStatistics.getKills());
-            player.sendMessage(CC.PRIMARY + "Deaths: " + CC.SECONDARY + targetStatistics.getDeaths());
-            player.sendMessage(CC.PRIMARY + "Credits: " + CC.SECONDARY + targetStatistics.getCredits());
-            player.sendMessage(CC.PRIMARY + "KDR: " + CC.SECONDARY + targetStatistics.getKillDeathRatio());
-            player.sendMessage(CC.PRIMARY + "Kill Streak: " + CC.SECONDARY + targetStatistics.getKillStreak());
-            player.sendMessage(CC.PRIMARY + "Highest Kill Streak: " + CC.SECONDARY + targetStatistics.getHighestKillStreak());
-            player.sendMessage(CC.PRIMARY + "Event Wins: " + CC.SECONDARY + targetStatistics.getEventWins());
+            player.sendMessage(CC.PRIMARY + "Kills: " + CC.SECONDARY + targetStats.getKills());
+            player.sendMessage(CC.PRIMARY + "Deaths: " + CC.SECONDARY + targetStats.getDeaths());
+            player.sendMessage(CC.PRIMARY + "Kill Streak: " + CC.SECONDARY + targetStats.getKillStreak());
+            player.sendMessage(CC.PRIMARY + "KDR: " + CC.SECONDARY + targetStats.getKillDeathRatio());
+            player.sendMessage(CC.PRIMARY + "Pesos: " + CC.SECONDARY + targetStats.getPesos());
+            player.sendMessage(CC.PRIMARY + "Highest Kill Streak: " + CC.SECONDARY + targetStats.getHighestKillStreak());
+            player.sendMessage(CC.PRIMARY + "Event Wins: " + CC.SECONDARY + targetStats.getEventWins());
             player.sendMessage(CC.SEPARATOR);
         }
     }

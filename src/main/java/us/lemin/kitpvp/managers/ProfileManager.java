@@ -25,4 +25,10 @@ public class ProfileManager {
     public void removeProfile(Player player) {
         profiles.remove(player.getUniqueId());
     }
+
+    public void saveAllProfiles() {
+        for (PlayerKitProfile profile : profiles.values()) {
+            profile.save(false, plugin);
+        }
+    }
 }
