@@ -23,11 +23,19 @@ public class EntityListener implements Listener {
 
         Player victim = (Player) event.getEntity();
 
-        if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
-            victim.teleport(plugin.getSpawnLocation());
+        if (victim.getAllowFlight()) {
+            victim.setFlying(false);
+            victim.setAllowFlight(false);
         }
 
-        PlayerKitProfile victimProfile = plugin.getProfileManager().getProfile(victim);
+        PlayerKitProfile victimProfile = plugin.getPlayerManager().getProfile(victim);
+
+        if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
+            victim.teleport(plugin.getSpawnLocation());
+        } else if (event.getCause() == EntityDamageEvent.DamageCause.FALL && !victimProfile.isFallDamageEnabled()) {
+            event.setCancelled(true);
+            return;
+        }
 
         if (victimProfile.getState() == PlayerState.SPAWN) {
             event.setCancelled(true);
@@ -41,13 +49,13 @@ public class EntityListener implements Listener {
         }
 
         Player damager = (Player) event.getDamager();
-        PlayerKitProfile damagerProfile = plugin.getProfileManager().getProfile(damager);
+        PlayerKitProfile damagerProfile = plugin.getPlayerManager().getProfile(damager);
 
         Player victim = (Player) event.getEntity();
-        PlayerKitProfile victimProfile = plugin.getProfileManager().getProfile(victim);
+        PlayerKitProfile victimProfile = plugin.getPlayerManager().getProfile(victim);
 
-        if (damagerProfile.getState() == PlayerState.SPAWN && victimProfile.getState() == PlayerState.FIGHTING) {
-            damagerProfile.setState(PlayerState.FIGHTING);
+        if (damagerProfile.getState() == PlayerState.SPAWN && victimProfile.getState() == PlayerState.FFA) {
+            damagerProfile.setState(PlayerState.FFA);
             damager.sendMessage(CC.RED + "You no longer have spawn protection!");
         }
 

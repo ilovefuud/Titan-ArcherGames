@@ -23,7 +23,7 @@ public class StatisticsCommand extends PlayerCommand {
         if (target == null) {
             player.sendMessage(CC.RED + "Player not found."); // TODO: offline stats lookup
         } else {
-            PlayerKitProfile targetProfile = plugin.getProfileManager().getProfile(target);
+            PlayerKitProfile targetProfile = plugin.getPlayerManager().getProfile(target);
             PlayerStatistics targetStats = targetProfile.getStatistics();
 
             player.sendMessage(CC.SEPARATOR);

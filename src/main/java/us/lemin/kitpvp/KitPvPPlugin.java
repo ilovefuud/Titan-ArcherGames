@@ -18,6 +18,7 @@ import tech.coords.scoreboardapi.ScoreboardApi;
 import us.lemin.core.storage.flatfile.Config;
 import us.lemin.kitpvp.commands.HelpCommand;
 import us.lemin.kitpvp.commands.KitCommand;
+import us.lemin.kitpvp.commands.SpawnCommand;
 import us.lemin.kitpvp.commands.StatisticsCommand;
 import us.lemin.kitpvp.commands.admin.EditRegionCommand;
 import us.lemin.kitpvp.commands.admin.SetSpawnCommand;
@@ -28,7 +29,7 @@ import us.lemin.kitpvp.listeners.PlayerListener;
 import us.lemin.kitpvp.listeners.RegionListener;
 import us.lemin.kitpvp.listeners.WorldListener;
 import us.lemin.kitpvp.managers.KitManager;
-import us.lemin.kitpvp.managers.ProfileManager;
+import us.lemin.kitpvp.managers.PlayerManager;
 import us.lemin.kitpvp.managers.RegionManager;
 import us.lemin.kitpvp.scoreboard.KitPvPAdapter;
 import us.lemin.kitpvp.util.structure.Cuboid;
@@ -42,7 +43,7 @@ public class KitPvPPlugin extends JavaPlugin {
     @Setter
     private Cuboid spawnCuboid;
 
-    private ProfileManager profileManager;
+    private PlayerManager playerManager;
     private KitManager kitManager;
     private InventoryManager inventoryManager;
     private RegionManager regionManager;
@@ -71,7 +72,7 @@ public class KitPvPPlugin extends JavaPlugin {
         spawnLocation = locationConfig.getLocation("spawn");
         spawnCuboid = (Cuboid) locationConfig.get("spawn-cuboid");
 
-        profileManager = new ProfileManager(this);
+        playerManager = new PlayerManager(this);
         kitManager = new KitManager(this);
         inventoryManager = new InventoryManager(this);
         inventoryManager.registerWrapper(new KitSelectorWrapper(this));
@@ -84,7 +85,8 @@ public class KitPvPPlugin extends JavaPlugin {
                 new KitCommand(this),
                 new HelpCommand(),
                 new SetSpawnCommand(this),
-                new EditRegionCommand(this)
+                new EditRegionCommand(this),
+                new SpawnCommand(this)
         );
         registerListeners(
                 new PlayerListener(this),
@@ -105,7 +107,7 @@ public class KitPvPPlugin extends JavaPlugin {
     @Override
     public void onDisable() {
         locationConfig.save();
-        profileManager.saveAllProfiles();
+        playerManager.saveAllProfiles();
 
         World mainWorld = getServer().getWorlds().get(0);
 

@@ -42,12 +42,12 @@ public abstract class Kit implements Listener {
     }
 
     protected boolean checkPlayer(Player player) {
-        PlayerKitProfile profile = plugin.getProfileManager().getProfile(player);
+        PlayerKitProfile profile = plugin.getPlayerManager().getProfile(player);
         return profile.getKit() == this;
     }
 
     public void apply(Player player) {
-        PlayerKitProfile profile = plugin.getProfileManager().getProfile(player);
+        PlayerKitProfile profile = plugin.getPlayerManager().getProfile(player);
 
         profile.setKit(this);
         contents.apply(player);

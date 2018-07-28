@@ -24,6 +24,12 @@ public class PlayerKitProfile {
     @Getter
     @Setter
     private Kit kit;
+    @Getter
+    @Setter
+    private boolean fallDamageEnabled = true;
+    @Getter
+    @Setter
+    private boolean awaitingTeleport;
 
     public PlayerKitProfile(UUID id, String name) {
         this.id = id;

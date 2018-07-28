@@ -28,5 +28,6 @@ public class KitSelectorWrapper extends SimpleInventoryWrapper {
 
     @Override
     public void update() {
+        // NO-OP
     }
 }

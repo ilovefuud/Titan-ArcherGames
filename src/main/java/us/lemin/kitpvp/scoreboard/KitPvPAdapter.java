@@ -19,7 +19,7 @@ public class KitPvPAdapter implements ScoreboardAdapter {
         event.setSeparator(CC.BOARD_SEPARATOR);
 
         Player player = event.getPlayer();
-        PlayerKitProfile profile = plugin.getProfileManager().getProfile(player);
+        PlayerKitProfile profile = plugin.getPlayerManager().getProfile(player);
         PlayerStatistics stats = profile.getStatistics();
 
         event.addLine(CC.PRIMARY + "Kills: " + CC.SECONDARY + stats.getKills());

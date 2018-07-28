@@ -7,6 +7,7 @@ import us.lemin.kitpvp.KitPvPPlugin;
 import us.lemin.kitpvp.inventory.KitSelectorWrapper;
 import us.lemin.kitpvp.kit.Kit;
 import us.lemin.kitpvp.player.PlayerKitProfile;
+import us.lemin.kitpvp.player.PlayerState;
 
 public class KitCommand extends PlayerCommand {
     private final KitPvPPlugin plugin;
@@ -18,10 +19,10 @@ public class KitCommand extends PlayerCommand {
 
     @Override
     public void execute(Player player, String[] args) {
-        PlayerKitProfile profile = plugin.getProfileManager().getProfile(player);
+        PlayerKitProfile profile = plugin.getPlayerManager().getProfile(player);
 
-        if (profile.getKit() != null) {
-            player.sendMessage(CC.RED + "You already have a kit!");
+        if (profile.getState() != PlayerState.SPAWN) {
+            player.sendMessage(CC.RED + "You can't choose a kit right now!");
             return;
         }
 

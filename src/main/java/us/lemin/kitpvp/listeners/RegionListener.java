@@ -57,7 +57,7 @@ public class RegionListener implements Listener {
     @EventHandler
     public void onMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
-        PlayerKitProfile profile = plugin.getProfileManager().getProfile(player);
+        PlayerKitProfile profile = plugin.getPlayerManager().getProfile(player);
 
         if (profile.getState() != PlayerState.SPAWN) {
             return;
@@ -71,8 +71,11 @@ public class RegionListener implements Listener {
         }
 
         if (!plugin.getSpawnCuboid().contains(to)) {
-            profile.setState(PlayerState.FIGHTING);
-            player.sendMessage(CC.RED + "You no longer have spawn protection!");
+            plugin.getPlayerManager().loseSpawnProtection(player);
+        }
+
+        if (profile.isAwaitingTeleport()) {
+            profile.setAwaitingTeleport(false);
         }
     }
 
