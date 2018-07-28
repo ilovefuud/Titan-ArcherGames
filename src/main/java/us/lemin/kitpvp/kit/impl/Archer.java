@@ -1,6 +1,6 @@
 package us.lemin.kitpvp.kit.impl;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -25,10 +25,7 @@ public class Archer extends Kit {
 
     @Override
     public List<PotionEffect> effects() {
-        return Arrays.asList(
-                new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 1),
-                new PotionEffect(PotionEffectType.FIRE_RESISTANCE, Integer.MAX_VALUE, 0)
-        );
+        return Collections.singletonList(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 1));
     }
 
     @Override
@@ -38,16 +35,14 @@ public class Archer extends Kit {
         builder.addItem(new ItemBuilder(Material.IRON_SWORD).enchant(Enchantment.DAMAGE_ALL, 1).build());
         builder.addItem(new ItemBuilder(Material.BOW)
                 .enchant(Enchantment.ARROW_DAMAGE, 5)
-                .enchant(Enchantment.ARROW_INFINITE, 1)
-                .enchant(Enchantment.ARROW_FIRE, 1)
-                .enchant(Enchantment.ARROW_KNOCKBACK, 2).build());
+                .enchant(Enchantment.ARROW_INFINITE, 1).build());
         builder.addItem(new ItemStack(Material.ENDER_PEARL, 16));
         builder.setItem(35, new ItemStack(Material.ARROW));
         builder.fill(new ItemStack(Material.MUSHROOM_SOUP));
         builder.addArmor(
                 new ItemStack(Material.LEATHER_BOOTS),
                 new ItemStack(Material.IRON_LEGGINGS),
-                new ItemStack(Material.IRON_CHESTPLATE),
+                new ItemStack(Material.LEATHER_CHESTPLATE),
                 new ItemStack(Material.LEATHER_HELMET)
         );
 

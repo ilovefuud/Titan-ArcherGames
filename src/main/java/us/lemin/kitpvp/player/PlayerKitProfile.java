@@ -19,6 +19,7 @@ public class PlayerKitProfile {
     @Getter
     private final PlayerStatistics statistics = new PlayerStatistics();
     @Getter
+    @Setter
     private PlayerState state = PlayerState.SPAWN;
     @Getter
     @Setter

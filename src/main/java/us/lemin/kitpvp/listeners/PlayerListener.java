@@ -17,11 +17,13 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import us.lemin.core.utils.message.CC;
 import us.lemin.core.utils.player.PlayerUtil;
 import us.lemin.kitpvp.KitPvPPlugin;
 import us.lemin.kitpvp.player.PlayerDamageData;
 import us.lemin.kitpvp.player.PlayerKitProfile;
+import us.lemin.kitpvp.player.PlayerState;
 
 @RequiredArgsConstructor
 public class PlayerListener implements Listener {
@@ -54,7 +56,7 @@ public class PlayerListener implements Listener {
 
         PlayerUtil.clearPlayer(player);
 
-        player.teleport(player.getWorld().getSpawnLocation());
+        player.teleport(plugin.getSpawnLocation());
 
         player.sendMessage(CC.SEPARATOR);
         player.sendMessage(CC.PRIMARY + "Welcome to " + CC.SECONDARY + "Lemin KitPvP" + CC.PRIMARY + "!");
@@ -145,5 +147,13 @@ public class PlayerListener implements Listener {
                 player.spigot().respawn();
             }
         }, 16L);
+    }
+
+    @EventHandler
+    public void onRespawn(PlayerRespawnEvent event) {
+        Player player = event.getPlayer();
+        PlayerKitProfile profile = plugin.getProfileManager().getProfile(player);
+
+        profile.setState(PlayerState.SPAWN);
     }
 }

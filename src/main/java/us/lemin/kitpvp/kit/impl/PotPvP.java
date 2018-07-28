@@ -36,7 +36,9 @@ public class PotPvP extends Kit {
         builder.addItem(new ItemStack(Material.ENDER_PEARL, 16));
         builder.fill(new ItemBuilder(Material.POTION).durability(16421).build());
         builder.addArmor(
-                new ItemBuilder(Material.IRON_BOOTS).enchant(Enchantment.PROTECTION_ENVIRONMENTAL, 2).build(),
+                new ItemBuilder(Material.IRON_BOOTS)
+                        .enchant(Enchantment.PROTECTION_ENVIRONMENTAL, 2)
+                        .enchant(Enchantment.PROTECTION_FALL, 4).build(),
                 new ItemBuilder(Material.IRON_LEGGINGS).enchant(Enchantment.PROTECTION_ENVIRONMENTAL, 2).build(),
                 new ItemBuilder(Material.IRON_CHESTPLATE).enchant(Enchantment.PROTECTION_ENVIRONMENTAL, 2).build(),
                 new ItemBuilder(Material.IRON_HELMET).enchant(Enchantment.PROTECTION_ENVIRONMENTAL, 2).build()
