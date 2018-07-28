@@ -17,15 +17,7 @@ public class KitSelectorWrapper extends SimpleInventoryWrapper {
 
     @Override
     public void init() {
-        // fill border with orange glass
-        for (int row = 1; row <= 3; row++) {
-            for (int column = 1; column <= 9; column++) {
-                if (row != 2 || column == 1 || column == 9) {
-                    setItem(row, column, new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 1), e -> {
-                    });
-                }
-            }
-        }
+        fillBorder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 1));
 
         int count = 2;
 

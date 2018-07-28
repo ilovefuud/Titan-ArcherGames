@@ -125,6 +125,8 @@ public class PlayerListener implements Listener {
         PlayerDamageData damageData = profile.getDamageData();
         double totalDamage = damageData.total();
         player.sendMessage(totalDamage + "");
+        Map<UUID, Double> sortedDamage = damageData.sortedMap();
+        UUID killer = sortedDamage.keySet().stream().findFirst().orElse(null);
 
         for (Map.Entry<UUID, Double> entry : damageData.sortedMap().entrySet()) {
             UUID damagerId = entry.getKey();
