@@ -26,7 +26,7 @@ public class KitPvPAdapter implements ScoreboardAdapter {
         event.addLine(CC.PRIMARY + "Deaths: " + CC.SECONDARY + stats.getDeaths());
         event.addLine(CC.PRIMARY + "Kill Streak: " + CC.SECONDARY + stats.getKillStreak());
         event.addLine(CC.PRIMARY + "KDR: " + CC.SECONDARY + stats.getKillDeathRatio());
-        event.addLine(CC.PRIMARY + "Pesos: " + CC.SECONDARY + stats.getPesos());
+        event.addLine(CC.PRIMARY + "Credits: " + CC.SECONDARY + stats.getCredits());
         event.addLine("");
         event.addLine(CC.SECONDARY + "lemin.us");
     }

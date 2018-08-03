@@ -13,7 +13,7 @@ public class KitCommand extends PlayerCommand {
     private final KitPvPPlugin plugin;
 
     public KitCommand(KitPvPPlugin plugin) {
-        super("kit");
+        super("currentKit");
         this.plugin = plugin;
     }
 

@@ -71,11 +71,11 @@ public class RegionListener implements Listener {
         }
 
         if (!plugin.getSpawnCuboid().contains(to)) {
-            plugin.getPlayerManager().loseSpawnProtection(player);
-
-            if (profile.getKit() == null) {
-                plugin.getKitManager().getKitByName("PvP").apply(player);
+            if (profile.getCurrentKit() == null) {
+                plugin.getKitManager().getDefaultKit().apply(player);
             }
+
+            plugin.getPlayerManager().loseSpawnProtection(player);
         }
     }
 

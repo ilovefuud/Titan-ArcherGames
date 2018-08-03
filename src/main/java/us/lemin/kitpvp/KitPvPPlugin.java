@@ -16,6 +16,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import tech.coords.inventoryapi.InventoryManager;
 import tech.coords.scoreboardapi.ScoreboardApi;
 import us.lemin.core.storage.flatfile.Config;
+import us.lemin.kitpvp.commands.ClearKitCommand;
 import us.lemin.kitpvp.commands.HelpCommand;
 import us.lemin.kitpvp.commands.KitCommand;
 import us.lemin.kitpvp.commands.SpawnCommand;
@@ -83,6 +84,7 @@ public class KitPvPPlugin extends JavaPlugin {
         registerCommands(
                 new StatisticsCommand(this),
                 new KitCommand(this),
+                new ClearKitCommand(this),
                 new HelpCommand(),
                 new SetSpawnCommand(this),
                 new EditRegionCommand(this),

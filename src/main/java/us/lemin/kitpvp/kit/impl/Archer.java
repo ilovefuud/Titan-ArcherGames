@@ -24,7 +24,7 @@ public class Archer extends Kit {
     }
 
     @Override
-    public List<PotionEffect> effects() {
+    protected List<PotionEffect> effects() {
         return Collections.singletonList(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 1));
     }
 
@@ -34,7 +34,7 @@ public class Archer extends Kit {
 
         builder.addItem(new ItemBuilder(Material.IRON_SWORD).enchant(Enchantment.DAMAGE_ALL, 1).build());
         builder.addItem(new ItemBuilder(Material.BOW)
-                .enchant(Enchantment.ARROW_DAMAGE, 5)
+                .enchant(Enchantment.ARROW_DAMAGE, 3)
                 .enchant(Enchantment.ARROW_INFINITE, 1).build());
         builder.addItem(new ItemStack(Material.ENDER_PEARL, 16));
         builder.setItem(35, new ItemStack(Material.ARROW));
@@ -42,7 +42,7 @@ public class Archer extends Kit {
         builder.addArmor(
                 new ItemStack(Material.LEATHER_BOOTS),
                 new ItemStack(Material.IRON_LEGGINGS),
-                new ItemStack(Material.LEATHER_CHESTPLATE),
+                new ItemStack(Material.IRON_CHESTPLATE),
                 new ItemStack(Material.LEATHER_HELMET)
         );
 

@@ -3,6 +3,7 @@ package us.lemin.kitpvp.managers;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import lombok.Getter;
 import us.lemin.kitpvp.KitPvPPlugin;
 import us.lemin.kitpvp.kit.Kit;
 import us.lemin.kitpvp.kit.impl.Archer;
@@ -10,7 +11,10 @@ import us.lemin.kitpvp.kit.impl.PotPvP;
 import us.lemin.kitpvp.kit.impl.PvP;
 
 public class KitManager {
-    private final Map<String, Kit> kits = new LinkedHashMap<>();
+    private final Map<String, Kit> kitNames = new LinkedHashMap<>();
+    private final Map<Class<? extends Kit>, Kit> kitClasses = new LinkedHashMap<>();
+    @Getter
+    private final Kit defaultKit;
 
     public KitManager(KitPvPPlugin plugin) {
         registerKits(
@@ -18,19 +22,26 @@ public class KitManager {
                 new PotPvP(plugin),
                 new Archer(plugin)
         );
+
+        defaultKit = getKitByClass(PvP.class);
     }
 
     private void registerKits(Kit... kits) {
         for (Kit kit : kits) {
-            this.kits.put(kit.getName().toLowerCase(), kit);
+            kitNames.put(kit.getName().toLowerCase(), kit);
+            kitClasses.put(kit.getClass(), kit);
         }
     }
 
     public Kit getKitByName(String kitName) {
-        return kits.get(kitName.toLowerCase());
+        return kitNames.get(kitName.toLowerCase());
+    }
+
+    public Kit getKitByClass(Class<? extends Kit> clazz) {
+        return kitClasses.get(clazz);
     }
 
     public Collection<Kit> getKits() {
-        return kits.values();
+        return kitNames.values();
     }
 }

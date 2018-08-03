@@ -4,13 +4,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import us.lemin.core.CorePlugin;
 import us.lemin.core.player.CoreProfile;
+import us.lemin.core.utils.item.ItemBuilder;
 import us.lemin.core.utils.message.CC;
 import us.lemin.kitpvp.KitPvPPlugin;
 import us.lemin.kitpvp.player.PlayerKitProfile;
 import us.lemin.kitpvp.player.PlayerState;
+import us.lemin.kitpvp.util.ItemHotbars;
 
 @RequiredArgsConstructor
 public class PlayerManager {
@@ -18,7 +21,7 @@ public class PlayerManager {
     private final Map<UUID, PlayerKitProfile> profiles = new HashMap<>();
 
     public void createProfile(UUID id, String name) {
-        PlayerKitProfile profile = new PlayerKitProfile(id, name);
+        PlayerKitProfile profile = new PlayerKitProfile(plugin, id, name);
         profiles.put(id, profile);
     }
 
@@ -36,6 +39,17 @@ public class PlayerManager {
         }
     }
 
+    public void giveSpawnItems(Player player) {
+        ItemHotbars.SPAWN_ITEMS.apply(player);
+
+        PlayerKitProfile profile = getProfile(player);
+
+        if (profile.getLastKit() != null) {
+            player.getInventory().setItem(1, new ItemBuilder(Material.WATCH).name(CC.YELLOW + "Last Kit " + CC.SECONDARY + "(" + profile.getLastKit().getName() + ")").build());
+            player.updateInventory();
+        }
+    }
+
     public void loseSpawnProtection(Player player) {
         PlayerKitProfile profile = getProfile(player);
 
@@ -50,11 +64,9 @@ public class PlayerManager {
             profile.setFallDamageEnabled(false);
 
             plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-                if (!player.isOnline()) {
-                    return;
+                if (player.isOnline()) {
+                    profile.setFallDamageEnabled(true);
                 }
-
-                profile.setFallDamageEnabled(true);
             }, 20L * 5);
         }
 

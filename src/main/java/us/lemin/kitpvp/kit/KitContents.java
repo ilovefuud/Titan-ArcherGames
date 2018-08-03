@@ -17,7 +17,7 @@ public class KitContents {
         return new Builder();
     }
 
-    public void apply(Player player) {
+    void apply(Player player) {
         PlayerInventory inventory = player.getInventory();
 
         inventory.clear();
@@ -79,7 +79,7 @@ public class KitContents {
             }
         }
 
-        public KitContents build() {
+        KitContents build() {
             fillBlank(armor);
             fillBlank(contents);
             return new KitContents(armor, contents);

@@ -2,6 +2,7 @@ package us.lemin.kitpvp.listeners;
 
 import lombok.RequiredArgsConstructor;
 import org.bukkit.GameMode;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -51,12 +52,6 @@ public class EntityListener implements Listener {
         }
 
         Player victim = (Player) event.getEntity();
-
-        if (victim.getAllowFlight()) {
-            victim.setFlying(false);
-            victim.setAllowFlight(false);
-        }
-
         PlayerKitProfile victimProfile = plugin.getPlayerManager().getProfile(victim);
 
         if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
@@ -73,14 +68,22 @@ public class EntityListener implements Listener {
 
     @EventHandler
     public void onPlayerDamageByPlayer(EntityDamageByEntityEvent event) {
-        if (!(event.getDamager() instanceof Player) || !(event.getEntity() instanceof Player)) {
+        if (!(event.getEntity() instanceof Player)
+                || (!(event.getDamager() instanceof Player) && (!(event.getDamager() instanceof Arrow)
+                || !(((Arrow) event.getDamager()).getShooter() instanceof Player)))) {
             return;
         }
 
-        Player damager = (Player) event.getDamager();
-        PlayerKitProfile damagerProfile = plugin.getPlayerManager().getProfile(damager);
+        Player damager = event.getDamager() instanceof Player ? (Player) event.getDamager() : (Player) ((Arrow) event.getDamager()).getShooter();
 
+        if (damager.getAllowFlight()) {
+            damager.setAllowFlight(false);
+            damager.setFlying(false);
+        }
+
+        PlayerKitProfile damagerProfile = plugin.getPlayerManager().getProfile(damager);
         Player victim = (Player) event.getEntity();
+
         PlayerKitProfile victimProfile = plugin.getPlayerManager().getProfile(victim);
 
         if (damagerProfile.getState() == PlayerState.SPAWN && victimProfile.getState() == PlayerState.FFA) {

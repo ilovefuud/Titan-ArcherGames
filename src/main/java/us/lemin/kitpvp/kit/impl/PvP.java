@@ -24,7 +24,7 @@ public class PvP extends Kit {
     }
 
     @Override
-    public List<PotionEffect> effects() {
+    protected List<PotionEffect> effects() {
         return Collections.singletonList(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 0));
     }
 

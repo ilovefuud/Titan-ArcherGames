@@ -11,6 +11,7 @@ import us.lemin.core.utils.item.ItemBuilder;
 import us.lemin.core.utils.message.CC;
 import us.lemin.kitpvp.KitPvPPlugin;
 import us.lemin.kitpvp.player.PlayerKitProfile;
+import us.lemin.kitpvp.player.PlayerState;
 
 public abstract class Kit implements Listener {
     protected final KitPvPPlugin plugin;
@@ -19,6 +20,7 @@ public abstract class Kit implements Listener {
     @Getter
     private final ItemStack icon;
     private final KitContents contents;
+    private final List<PotionEffect> effects;
 
     public Kit(KitPvPPlugin plugin, String name, ItemStack icon, String... description) {
         this.plugin = plugin;
@@ -33,6 +35,7 @@ public abstract class Kit implements Listener {
 
         this.icon = builder.name(CC.SECONDARY + name).lore(coloredDescription).build();
         this.contents = contentsBuilder().build();
+        this.effects = effects();
 
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
@@ -43,11 +46,16 @@ public abstract class Kit implements Listener {
 
     protected boolean checkPlayer(Player player) {
         PlayerKitProfile profile = plugin.getPlayerManager().getProfile(player);
-        return profile.getKit() == this;
+        return profile.getCurrentKit() == this;
     }
 
     public void apply(Player player) {
         PlayerKitProfile profile = plugin.getPlayerManager().getProfile(player);
+
+        if (profile.getState() != PlayerState.SPAWN) {
+            player.sendMessage(CC.RED + "You can't choose a kit right now!");
+            return;
+        }
 
         profile.setKit(this);
         contents.apply(player);
@@ -56,7 +64,7 @@ public abstract class Kit implements Listener {
             player.removePotionEffect(effect.getType());
         }
 
-        for (PotionEffect effect : effects()) {
+        for (PotionEffect effect : effects) {
             player.addPotionEffect(effect);
         }
 
@@ -66,7 +74,7 @@ public abstract class Kit implements Listener {
 
     protected abstract void onEquip(Player player);
 
-    public abstract List<PotionEffect> effects();
+    protected abstract List<PotionEffect> effects();
 
     protected abstract KitContents.Builder contentsBuilder();
 }

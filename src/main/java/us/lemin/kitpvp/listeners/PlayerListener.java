@@ -23,17 +23,20 @@ import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 import us.lemin.core.CorePlugin;
 import us.lemin.core.player.CoreProfile;
+import us.lemin.core.player.rank.Rank;
 import us.lemin.core.utils.message.CC;
 import us.lemin.core.utils.player.PlayerUtil;
 import us.lemin.core.utils.timer.Timer;
 import us.lemin.kitpvp.KitPvPPlugin;
 import us.lemin.kitpvp.inventory.KitSelectorWrapper;
+import us.lemin.kitpvp.kit.Kit;
 import us.lemin.kitpvp.player.PlayerDamageData;
 import us.lemin.kitpvp.player.PlayerKitProfile;
 import us.lemin.kitpvp.player.PlayerState;
-import us.lemin.kitpvp.util.ItemHotbars;
 import us.lemin.kitpvp.util.MathUtil;
 
 @RequiredArgsConstructor
@@ -67,7 +70,7 @@ public class PlayerListener implements Listener {
 
         PlayerUtil.clearPlayer(player);
 
-        ItemHotbars.SPAWN_ITEMS.apply(player);
+        plugin.getPlayerManager().giveSpawnItems(player);
 
         player.teleport(plugin.getSpawnLocation());
 
@@ -80,6 +83,23 @@ public class PlayerListener implements Listener {
         if (coreProfile.hasDonor()) {
             player.setAllowFlight(true);
             player.setFlying(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onJoinHighest(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        Scoreboard scoreboard = player.getScoreboard();
+
+        for (Rank rank : Rank.values()) {
+            Team team = scoreboard.registerNewTeam(rank.getName());
+            team.setPrefix(rank.getColor());
+        }
+
+        for (Player onlinePlayer : plugin.getServer().getOnlinePlayers()) {
+            CoreProfile coreProfile = CorePlugin.getInstance().getProfileManager().getProfile(onlinePlayer.getUniqueId());
+            Team team = scoreboard.getTeam(coreProfile.getRank().getName());
+            team.addEntry(onlinePlayer.getName());
         }
     }
 
@@ -150,7 +170,7 @@ public class PlayerListener implements Listener {
         Player player = event.getPlayer();
         PlayerKitProfile profile = plugin.getPlayerManager().getProfile(player);
 
-        if (profile.getState() != PlayerState.SPAWN || profile.getKit() != null) {
+        if (profile.getState() != PlayerState.SPAWN || profile.getCurrentKit() != null) {
             return;
         }
 
@@ -159,6 +179,13 @@ public class PlayerListener implements Listener {
         switch (event.getItem().getType()) {
             case CHEST:
                 plugin.getInventoryManager().getWrapper(KitSelectorWrapper.class).open(player);
+                break;
+            case WATCH:
+                Kit kit = profile.getLastKit();
+
+                if (kit != null) {
+                    kit.apply(player);
+                }
                 break;
             case PAPER:
                 player.performCommand("stats");
@@ -242,19 +269,19 @@ public class PlayerListener implements Listener {
         Map<UUID, Double> sortedDamage = damageData.sortedMap();
         boolean killer = true;
 
-        for (Map.Entry<UUID, Double> entry : damageData.sortedMap().entrySet()) {
+        for (Map.Entry<UUID, Double> entry : sortedDamage.entrySet()) {
             UUID damagerId = entry.getKey();
             Player damager = plugin.getServer().getPlayer(damagerId);
             PlayerKitProfile damagerProfile = plugin.getPlayerManager().getProfile(damager);
             double damage = entry.getValue();
-            double multiplier = damage / totalDamage;
-            int worth = killer ? profile.worth() : (int) (profile.worth() * multiplier);
-            double percent = multiplier * 100;
-            String strPercent = String.format("%.1f", percent);
+            double percent = damage / totalDamage;
+            int worth = killer ? profile.getWorth() : (int) (profile.getWorth() * percent);
+            String strPercent = String.format("%.1f", percent * 100);
 
-            damagerProfile.getStatistics().setPesos(damagerProfile.getStatistics().getPesos() + worth);
+            damagerProfile.getStatistics().setCredits(damagerProfile.getStatistics().getCredits() + worth);
 
             if (killer) {
+                killer = false;
                 damagerProfile.getStatistics().handleKill();
                 damager.sendMessage(CC.PRIMARY + "You killed " + CC.SECONDARY + player.getDisplayName()
                         + CC.PRIMARY + " and received " + CC.SECONDARY + worth + CC.PRIMARY + " credits "
@@ -265,14 +292,11 @@ public class PlayerListener implements Listener {
                         + CC.PRIMARY + " and received " + CC.SECONDARY + worth + CC.PRIMARY + " credits "
                         + CC.GRAY + "(" + strPercent + "% of damage)" + CC.PRIMARY + ".");
             }
-
-            killer = false;
         }
 
+        profile.setCurrentKit(null);
         damageData.clear();
-
         profile.getStatistics().handleDeath();
-        profile.setKit(null);
 
         plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
             if (player.isOnline()) {
@@ -286,6 +310,6 @@ public class PlayerListener implements Listener {
         Player player = event.getPlayer();
 
         plugin.getPlayerManager().acquireSpawnProtection(player);
-        ItemHotbars.SPAWN_ITEMS.apply(player);
+        plugin.getPlayerManager().giveSpawnItems(player);
     }
 }

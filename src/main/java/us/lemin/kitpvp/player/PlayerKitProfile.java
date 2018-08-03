@@ -23,11 +23,15 @@ public class PlayerKitProfile {
     @Getter
     private final Timer pearlTimer = new DoubleTimer(16);
     @Getter
+    private final int worth;
+    @Getter
     @Setter
     private PlayerState state = PlayerState.SPAWN;
     @Getter
     @Setter
-    private Kit kit;
+    private Kit currentKit;
+    @Getter
+    private Kit lastKit;
     @Getter
     @Setter
     private boolean fallDamageEnabled = true;
@@ -35,18 +39,26 @@ public class PlayerKitProfile {
     @Setter
     private boolean awaitingTeleport;
 
-    public PlayerKitProfile(UUID id, String name) {
+    public PlayerKitProfile(KitPvPPlugin plugin, UUID id, String name) {
         this.id = id;
         this.name = name;
+        CoreProfile coreProfile = CorePlugin.getInstance().getProfileManager().getProfile(id);
+        this.worth = coreProfile.isDonor() ? 15 : 10;
 
         CorePlugin.getInstance().getMongoStorage().getOrCreateDocument("kitpvp", id, (document, found) -> {
             if (found) {
+                String lastKitName = document.getString("last_kit_name");
+
+                if (lastKitName != null) {
+                    this.lastKit = plugin.getKitManager().getKitByName(lastKitName);
+                }
+
                 statistics.setDeaths(document.getInteger("deaths", 0));
                 statistics.setEventWins(document.getInteger("event_wins", 0));
                 statistics.setHighestKillStreak(document.getInteger("highest_kill_streak", 0));
                 statistics.setKills(document.getInteger("kills", 0));
                 statistics.setKillStreak(document.getInteger("kill_streak", 0));
-                statistics.setPesos(document.getInteger("pesos", 0));
+                statistics.setCredits(document.getInteger("credits", 0));
             }
         });
     }
@@ -58,12 +70,13 @@ public class PlayerKitProfile {
     public void save(boolean async, KitPvPPlugin plugin) {
         Runnable runnable = () -> {
             MongoRequest request = MongoRequest.newRequest("kitpvp", id)
+                    .put("last_kit_name", lastKit.getName())
                     .put("deaths", statistics.getDeaths())
                     .put("event_wins", statistics.getEventWins())
                     .put("highest_kill_streak", statistics.getHighestKillStreak())
                     .put("kills", statistics.getKills())
                     .put("kill_streak", statistics.getKillStreak())
-                    .put("pesos", statistics.getPesos());
+                    .put("credits", statistics.getCredits());
 
             request.run();
         };
@@ -75,8 +88,7 @@ public class PlayerKitProfile {
         }
     }
 
-    public int worth() {
-        CoreProfile profile = CorePlugin.getInstance().getProfileManager().getProfile(id);
-        return profile.isDonor() ? 15 : 10;
+    public void setKit(Kit kit) {
+        this.currentKit = this.lastKit = kit;
     }
 }

@@ -32,7 +32,7 @@ public class StatisticsCommand extends PlayerCommand {
             player.sendMessage(CC.PRIMARY + "Deaths: " + CC.SECONDARY + targetStats.getDeaths());
             player.sendMessage(CC.PRIMARY + "Kill Streak: " + CC.SECONDARY + targetStats.getKillStreak());
             player.sendMessage(CC.PRIMARY + "KDR: " + CC.SECONDARY + targetStats.getKillDeathRatio());
-            player.sendMessage(CC.PRIMARY + "Pesos: " + CC.SECONDARY + targetStats.getPesos());
+            player.sendMessage(CC.PRIMARY + "Credits: " + CC.SECONDARY + targetStats.getCredits());
             player.sendMessage(CC.PRIMARY + "Highest Kill Streak: " + CC.SECONDARY + targetStats.getHighestKillStreak());
             player.sendMessage(CC.PRIMARY + "Event Wins: " + CC.SECONDARY + targetStats.getEventWins());
             player.sendMessage(CC.SEPARATOR);
