@@ -13,12 +13,39 @@ import org.bukkit.event.entity.ProjectileLaunchEvent;
 import us.lemin.core.utils.message.CC;
 import us.lemin.core.utils.timer.Timer;
 import us.lemin.kitpvp.KitPvPPlugin;
+import us.lemin.kitpvp.events.Event;
+import us.lemin.kitpvp.events.EventStage;
+import us.lemin.kitpvp.events.ParticipantState;
 import us.lemin.kitpvp.player.PlayerKitProfile;
 import us.lemin.kitpvp.player.PlayerState;
 
 @RequiredArgsConstructor
 public class EntityListener implements Listener {
     private final KitPvPPlugin plugin;
+
+    @EventHandler
+    public void onHit(EntityDamageEvent event) {
+        if (!(event.getEntity() instanceof Player)) {
+            return;
+        }
+
+        Player damager = (Player) event.getEntity();
+        PlayerKitProfile damagerProfile = plugin.getPlayerManager().getProfile(damager);
+
+        if (damagerProfile.getState() != PlayerState.EVENT) {
+            return;
+        }
+
+        Event activeEvent = damagerProfile.getActiveEvent();
+
+        if (activeEvent.getCurrentStage() != EventStage.FIGHTING) {
+            event.setCancelled(true);
+        }
+
+        if (activeEvent.getParticipantState(damagerProfile.getId()) != ParticipantState.FIGHTING) {
+            event.setCancelled(true);
+        }
+    }
 
     @EventHandler
     public void onShoot(ProjectileLaunchEvent event) {
