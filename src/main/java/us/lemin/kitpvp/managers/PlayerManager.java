@@ -84,6 +84,9 @@ public class PlayerManager {
         if (coreProfile.hasDonor()) {
             player.setAllowFlight(true);
             player.setFlying(true);
+        } else {
+            player.setAllowFlight(false);
+            player.setFlying(false);
         }
 
         player.sendMessage(CC.GREEN + "You have acquired spawn protection.");
@@ -100,6 +103,9 @@ public class PlayerManager {
         if (coreProfile.hasDonor()) {
             player.setAllowFlight(true);
             player.setFlying(true);
+        } else {
+            player.setAllowFlight(false);
+            player.setFlying(false);
         }
 
         giveSpawnItems(player);
