@@ -29,6 +29,7 @@ import org.bukkit.scoreboard.Team;
 import us.lemin.core.CorePlugin;
 import us.lemin.core.player.CoreProfile;
 import us.lemin.core.player.rank.Rank;
+import us.lemin.core.utils.item.ItemBuilder;
 import us.lemin.core.utils.message.CC;
 import us.lemin.core.utils.player.PlayerUtil;
 import us.lemin.core.utils.timer.Timer;
@@ -319,7 +320,9 @@ public class PlayerListener implements Listener {
                         + CC.GRAY + "(" + strPercent + "% of damage)" + CC.PRIMARY + ".");
 
                 for (int i = 0; i < 8; i++) {
-                    damager.getInventory().addItem(new ItemStack(Material.MUSHROOM_SOUP));
+                    damager.getInventory().addItem(damagerProfile.getCurrentKit().getName().equals("PotPvP") ?
+                            new ItemBuilder(Material.POTION).durability(16421).build() :
+                            new ItemStack(Material.MUSHROOM_SOUP));
                 }
 
                 player.sendMessage(CC.PRIMARY + "You were slain by " + CC.SECONDARY + damager.getDisplayName() + CC.PRIMARY + ".");
