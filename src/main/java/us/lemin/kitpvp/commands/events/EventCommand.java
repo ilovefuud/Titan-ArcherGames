@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import us.lemin.core.CorePlugin;
 import us.lemin.core.commands.PlayerCommand;
 import us.lemin.core.player.CoreProfile;
+import us.lemin.core.player.rank.Rank;
 import us.lemin.core.utils.message.CC;
 import us.lemin.core.utils.timer.Timer;
 import us.lemin.kitpvp.KitPvPPlugin;
@@ -53,8 +54,8 @@ public class EventCommand extends PlayerCommand {
             case "host": {
                 CoreProfile coreProfile = CorePlugin.getInstance().getProfileManager().getProfile(player.getUniqueId());
 
-                if (coreProfile != null && !coreProfile.hasDonor()) {
-                    player.sendMessage(CC.RED + "Only donors can host events! Buy a rank at http://pvp-land.buycraft.net");
+                if (coreProfile != null && !coreProfile.hasRank(Rank.VOTER)) {
+                    player.sendMessage(CC.RED + "Only voters can host events! Vote at https://namemc.com/server/lemin.us");
                     return;
                 }
 

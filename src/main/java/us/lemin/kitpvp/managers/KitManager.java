@@ -7,6 +7,7 @@ import lombok.Getter;
 import us.lemin.kitpvp.KitPvPPlugin;
 import us.lemin.kitpvp.kit.Kit;
 import us.lemin.kitpvp.kit.impl.Archer;
+import us.lemin.kitpvp.kit.impl.Fisherman;
 import us.lemin.kitpvp.kit.impl.PotPvP;
 import us.lemin.kitpvp.kit.impl.PvP;
 
@@ -20,7 +21,8 @@ public class KitManager {
         registerKits(
                 new PvP(plugin),
                 new PotPvP(plugin),
-                new Archer(plugin)
+                new Archer(plugin),
+                new Fisherman(plugin)
         );
 
         defaultKit = getKitByClass(PvP.class);

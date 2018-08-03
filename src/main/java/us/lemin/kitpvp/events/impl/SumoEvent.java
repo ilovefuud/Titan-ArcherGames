@@ -16,6 +16,7 @@ import us.lemin.kitpvp.events.Event;
 import us.lemin.kitpvp.events.EventStage;
 import us.lemin.kitpvp.events.EventType;
 import us.lemin.kitpvp.events.ParticipantState;
+import us.lemin.kitpvp.player.PlayerKitProfile;
 import us.lemin.kitpvp.util.TempLocations;
 
 public class SumoEvent extends Event implements Listener {
@@ -69,6 +70,8 @@ public class SumoEvent extends Event implements Listener {
     public void onEnd() {
         UUID winnerId = remainingPlayerIds().get(0);
         Player winnerPlayer = plugin.getServer().getPlayer(winnerId);
+        PlayerKitProfile profile = plugin.getPlayerManager().getProfile(winnerPlayer);
+        profile.getStatistics().setEventWins(profile.getStatistics().getEventWins() + 1);
 
         broadcast(winnerPlayer.getDisplayName() + CC.GREEN + " won the event!");
     }

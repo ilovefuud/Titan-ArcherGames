@@ -23,6 +23,7 @@ import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 import us.lemin.core.CorePlugin;
@@ -201,7 +202,6 @@ public class PlayerListener implements Listener {
                     case PAPER:
                         player.performCommand("stats");
                         break;
-                    case COMPASS:
                     case DIAMOND_SWORD:
                         player.sendMessage(CC.RED + "This feature is not yet available during testing.");
                         break;
@@ -317,6 +317,11 @@ public class PlayerListener implements Listener {
                 damager.sendMessage(CC.PRIMARY + "You killed " + CC.SECONDARY + player.getDisplayName()
                         + CC.PRIMARY + " and received " + CC.SECONDARY + worth + CC.PRIMARY + " credits "
                         + CC.GRAY + "(" + strPercent + "% of damage)" + CC.PRIMARY + ".");
+
+                for (int i = 0; i < 8; i++) {
+                    damager.getInventory().addItem(new ItemStack(Material.MUSHROOM_SOUP));
+                }
+
                 player.sendMessage(CC.PRIMARY + "You were slain by " + CC.SECONDARY + damager.getDisplayName() + CC.PRIMARY + ".");
             } else {
                 damager.sendMessage(CC.PRIMARY + "You got an assist on " + CC.SECONDARY + player.getDisplayName()
