@@ -32,6 +32,7 @@ import us.lemin.core.utils.message.CC;
 import us.lemin.core.utils.player.PlayerUtil;
 import us.lemin.core.utils.timer.Timer;
 import us.lemin.kitpvp.KitPvPPlugin;
+import us.lemin.kitpvp.events.Event;
 import us.lemin.kitpvp.inventory.KitSelectorWrapper;
 import us.lemin.kitpvp.kit.Kit;
 import us.lemin.kitpvp.player.PlayerDamageData;
@@ -103,10 +104,14 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         PlayerKitProfile profile = plugin.getPlayerManager().getProfile(player);
+
+        if (profile == null) {
+            return;
+        }
 
         switch (profile.getState()) {
             case FFA:
@@ -128,6 +133,10 @@ public class PlayerListener implements Listener {
                 if (kill) {
                     player.setHealth(0.0);
                 }
+                break;
+            case EVENT:
+                Event activeEvent = profile.getActiveEvent();
+                activeEvent.leave(player, profile);
                 break;
         }
 
@@ -170,29 +179,46 @@ public class PlayerListener implements Listener {
         Player player = event.getPlayer();
         PlayerKitProfile profile = plugin.getPlayerManager().getProfile(player);
 
-        if (profile.getState() != PlayerState.SPAWN || profile.getCurrentKit() != null) {
-            return;
-        }
+        switch (profile.getState()) {
+            case SPAWN:
+                event.setCancelled(true);
 
-        event.setCancelled(true);
+                if (profile.getCurrentKit() != null) {
+                    return;
+                }
 
-        switch (event.getItem().getType()) {
-            case CHEST:
-                plugin.getInventoryManager().getWrapper(KitSelectorWrapper.class).open(player);
-                break;
-            case WATCH:
-                Kit kit = profile.getLastKit();
+                switch (event.getItem().getType()) {
+                    case CHEST:
+                        plugin.getInventoryManager().getWrapper(KitSelectorWrapper.class).open(player);
+                        break;
+                    case WATCH:
+                        Kit kit = profile.getLastKit();
 
-                if (kit != null) {
-                    kit.apply(player);
+                        if (kit != null) {
+                            kit.apply(player);
+                        }
+                        break;
+                    case PAPER:
+                        player.performCommand("stats");
+                        break;
+                    case COMPASS:
+                    case DIAMOND_SWORD:
+                        player.sendMessage(CC.RED + "This feature is not yet available during testing.");
+                        break;
                 }
                 break;
-            case PAPER:
-                player.performCommand("stats");
-                break;
-            case COMPASS:
-            case DIAMOND_SWORD:
-                player.sendMessage(CC.RED + "This feature is not yet available during testing.");
+            case EVENT:
+                event.setCancelled(true);
+
+                switch (event.getItem().getType()) {
+                    case INK_SACK:
+                        Event activeEvent = profile.getActiveEvent();
+
+                        if (activeEvent != null) {
+                            activeEvent.leave(player, profile);
+                        }
+                        break;
+                }
                 break;
         }
     }
@@ -275,6 +301,11 @@ public class PlayerListener implements Listener {
             PlayerKitProfile damagerProfile = plugin.getPlayerManager().getProfile(damager);
             double damage = entry.getValue();
             double percent = damage / totalDamage;
+
+            if (!killer && percent < 0.15) {
+                continue;
+            }
+
             int worth = killer ? profile.getWorth() : (int) (profile.getWorth() * percent);
             String strPercent = String.format("%.1f", percent * 100);
 

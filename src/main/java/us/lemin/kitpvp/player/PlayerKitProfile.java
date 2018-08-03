@@ -1,6 +1,7 @@
 package us.lemin.kitpvp.player;
 
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import lombok.Getter;
 import lombok.Setter;
 import us.lemin.core.CorePlugin;
@@ -8,7 +9,9 @@ import us.lemin.core.player.CoreProfile;
 import us.lemin.core.storage.database.MongoRequest;
 import us.lemin.core.utils.timer.Timer;
 import us.lemin.core.utils.timer.impl.DoubleTimer;
+import us.lemin.core.utils.timer.impl.IntegerTimer;
 import us.lemin.kitpvp.KitPvPPlugin;
+import us.lemin.kitpvp.events.Event;
 import us.lemin.kitpvp.kit.Kit;
 
 public class PlayerKitProfile {
@@ -23,6 +26,8 @@ public class PlayerKitProfile {
     @Getter
     private final Timer pearlTimer = new DoubleTimer(16);
     @Getter
+    private final Timer eventHostTimer = new IntegerTimer(TimeUnit.MINUTES, 5);
+    @Getter
     private final int worth;
     @Getter
     @Setter
@@ -32,6 +37,9 @@ public class PlayerKitProfile {
     private Kit currentKit;
     @Getter
     private Kit lastKit;
+    @Getter
+    @Setter
+    private Event activeEvent;
     @Getter
     @Setter
     private boolean fallDamageEnabled = true;

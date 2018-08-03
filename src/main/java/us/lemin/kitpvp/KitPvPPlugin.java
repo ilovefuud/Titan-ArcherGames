@@ -23,12 +23,14 @@ import us.lemin.kitpvp.commands.SpawnCommand;
 import us.lemin.kitpvp.commands.StatisticsCommand;
 import us.lemin.kitpvp.commands.admin.EditRegionCommand;
 import us.lemin.kitpvp.commands.admin.SetSpawnCommand;
+import us.lemin.kitpvp.commands.events.EventCommand;
 import us.lemin.kitpvp.inventory.KitSelectorWrapper;
 import us.lemin.kitpvp.listeners.EntityListener;
 import us.lemin.kitpvp.listeners.InventoryListener;
 import us.lemin.kitpvp.listeners.PlayerListener;
 import us.lemin.kitpvp.listeners.RegionListener;
 import us.lemin.kitpvp.listeners.WorldListener;
+import us.lemin.kitpvp.managers.EventManager;
 import us.lemin.kitpvp.managers.KitManager;
 import us.lemin.kitpvp.managers.PlayerManager;
 import us.lemin.kitpvp.managers.RegionManager;
@@ -48,6 +50,7 @@ public class KitPvPPlugin extends JavaPlugin {
     private KitManager kitManager;
     private InventoryManager inventoryManager;
     private RegionManager regionManager;
+    private EventManager eventManager;
 
     private ScoreboardApi scoreboardApi;
 
@@ -78,6 +81,7 @@ public class KitPvPPlugin extends JavaPlugin {
         inventoryManager = new InventoryManager(this);
         inventoryManager.registerWrapper(new KitSelectorWrapper(this));
         regionManager = new RegionManager();
+        eventManager = new EventManager(this);
 
         scoreboardApi = new ScoreboardApi(this, new KitPvPAdapter(this));
 
@@ -88,7 +92,8 @@ public class KitPvPPlugin extends JavaPlugin {
                 new HelpCommand(),
                 new SetSpawnCommand(this),
                 new EditRegionCommand(this),
-                new SpawnCommand(this)
+                new SpawnCommand(this),
+                new EventCommand(this)
         );
         registerListeners(
                 new PlayerListener(this),

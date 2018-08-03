@@ -88,4 +88,24 @@ public class PlayerManager {
 
         player.sendMessage(CC.GREEN + "You have acquired spawn protection.");
     }
+
+    public void resetPlayer(Player player, boolean teleport) {
+        PlayerKitProfile profile = getProfile(player);
+
+        profile.setState(PlayerState.SPAWN);
+        profile.setFallDamageEnabled(true);
+
+        CoreProfile coreProfile = CorePlugin.getInstance().getProfileManager().getProfile(player.getUniqueId());
+
+        if (coreProfile.hasDonor()) {
+            player.setAllowFlight(true);
+            player.setFlying(true);
+        }
+
+        giveSpawnItems(player);
+
+        if (teleport) {
+            player.teleport(plugin.getSpawnLocation());
+        }
+    }
 }
