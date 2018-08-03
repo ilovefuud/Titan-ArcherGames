@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitTask;
 import us.lemin.core.utils.item.ItemBuilder;
 import us.lemin.core.utils.message.CC;
@@ -159,6 +160,12 @@ public abstract class Event implements Runnable {
         player.setFlying(true);
         player.teleport(spawnLocation);
         player.getInventory().clear();
+        player.getInventory().setArmorContents(null);
+
+        for (PotionEffect effect : player.getActivePotionEffects()) {
+            player.removePotionEffect(effect.getType());
+        }
+
         player.getInventory().setItem(8, new ItemBuilder(Material.INK_SACK).durability(1).name(CC.RED + "Leave Event").build());
     }
 
