@@ -183,7 +183,10 @@ public class PlayerListener implements Listener {
 
         switch (profile.getState()) {
             case SPAWN:
-                event.setCancelled(true);
+                if (player.getGameMode() != GameMode.CREATIVE && !player.isOp()) {
+                    event.setCancelled(true);
+                }
+
 
                 if (profile.getCurrentKit() != null) {
                     return;

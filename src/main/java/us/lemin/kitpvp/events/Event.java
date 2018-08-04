@@ -120,7 +120,7 @@ public abstract class Event implements Runnable {
             player.sendMessage(CC.RED + "The event has already started!");
             return;
         }
-
+        profile.setKit(null);
         profile.setState(PlayerState.EVENT);
         profile.setActiveEvent(this);
         playerStates.put(player.getUniqueId(), ParticipantState.WAITING);
