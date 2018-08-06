@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -298,6 +300,7 @@ public class PlayerListener implements Listener {
         double totalDamage = damageData.total();
         Map<UUID, Double> sortedDamage = damageData.sortedMap();
         boolean killer = true;
+        ComponentBuilder message = new ComponentBuilder("");
 
         for (Map.Entry<UUID, Double> entry : sortedDamage.entrySet()) {
             UUID damagerId = entry.getKey();
