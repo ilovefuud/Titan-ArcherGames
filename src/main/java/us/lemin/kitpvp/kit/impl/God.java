@@ -1,31 +1,22 @@
 package us.lemin.kitpvp.kit.impl;
 
-import java.util.Collections;
-import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import us.lemin.core.utils.item.ItemBuilder;
-import us.lemin.kitpvp.KitPvPPlugin;
+import us.lemin.kitpvp.ArcherGamesPlugin;
 import us.lemin.kitpvp.kit.Kit;
 import us.lemin.kitpvp.kit.KitContents;
 
-public class PvP extends Kit {
-    public PvP(KitPvPPlugin plugin) {
-        super(plugin, "PvP", Material.DIAMOND_SWORD, "The standard PvP kit.");
+public class God extends Kit {
+    public God(ArcherGamesPlugin plugin) {
+        super(plugin, "God", Material.DIAMOND_SWORD, 10000, "The God Kit.");
     }
 
     @Override
     protected void onEquip(Player player) {
         // NO-OP
-    }
-
-    @Override
-    protected List<PotionEffect> effects() {
-        return Collections.singletonList(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 0));
     }
 
     @Override

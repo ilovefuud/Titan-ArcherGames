@@ -1,51 +1,55 @@
 package us.lemin.kitpvp.listeners;
 
-import lombok.RequiredArgsConstructor;
-import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.entity.Arrow;
-import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.inventory.ItemStack;
 import us.lemin.core.utils.message.CC;
-import us.lemin.core.utils.timer.Timer;
-import us.lemin.kitpvp.KitPvPPlugin;
-import us.lemin.kitpvp.events.Event;
-import us.lemin.kitpvp.events.EventStage;
-import us.lemin.kitpvp.events.ParticipantState;
-import us.lemin.kitpvp.player.PlayerKitProfile;
-import us.lemin.kitpvp.player.PlayerState;
+import us.lemin.kitpvp.ArcherGamesPlugin;
+import us.lemin.kitpvp.player.PlayerProfile;
+import us.lemin.kitpvp.server.ServerStage;
 
-@RequiredArgsConstructor
 public class EntityListener implements Listener {
-    private final KitPvPPlugin plugin;
+
+    public EntityListener(ArcherGamesPlugin plugin) {
+        this.plugin = plugin;
+    }
+
+    private final ArcherGamesPlugin plugin;
+
 
     @EventHandler
-    public void onHit(EntityDamageEvent event) {
+    public void onProjectileHit(ProjectileHitEvent event) {
+        if (event.getEntity() instanceof Arrow && event.getEntity().getShooter() instanceof Player) {
+            PlayerProfile profile = plugin.getPlayerManager().getProfile(((Player) event.getEntity().getShooter()).getPlayer());
+            if (profile.hasGodKit()) {
+                Location location = event.getEntity().getLocation();
+                location.getWorld().createExplosion(location, 2);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onEntityDamage(EntityDamageEvent event) {
+        if (plugin.getServerManager().getServerStage() != ServerStage.FIGHTING) {
+            event.setCancelled(true);
+        }
         if (!(event.getEntity() instanceof Player)) {
             return;
         }
-
-        Player damager = (Player) event.getEntity();
-        PlayerKitProfile damagerProfile = plugin.getPlayerManager().getProfile(damager);
-
-        if (damagerProfile.getState() != PlayerState.EVENT) {
-            return;
-        }
-
-        Event activeEvent = damagerProfile.getActiveEvent();
-
-        if (activeEvent.getCurrentStage() != EventStage.FIGHTING) {
-            event.setCancelled(true);
-        }
-
-        if (activeEvent.getParticipantState(damagerProfile.getId()) != ParticipantState.FIGHTING) {
-            event.setCancelled(true);
+        Player player = ((Player) event.getEntity()).getPlayer();
+        boolean died = event.getFinalDamage() > player.getHealth();
+        if (died) {
+            plugin.getPlayerManager().removePlayer(player);
         }
     }
+
 
     @EventHandler
     public void onShoot(ProjectileLaunchEvent event) {
@@ -55,43 +59,15 @@ public class EntityListener implements Listener {
 
         Player player = (Player) event.getEntity().getShooter();
 
-        if (player.getGameMode() != GameMode.SURVIVAL) {
-            return;
-        }
 
-        PlayerKitProfile profile = plugin.getPlayerManager().getProfile(player);
+        PlayerProfile profile = plugin.getPlayerManager().getProfile(player);
 
-        if (profile.getState() != PlayerState.FFA) {
-            return;
-        }
-
-        if (event.getEntity() instanceof EnderPearl) {
-            Timer timer = profile.getPearlTimer();
-
-            timer.isActive(); // check active
+        if (plugin.getServerManager().getServerStage() != ServerStage.FIGHTING) {
+            event.setCancelled(true);
+            player.sendMessage(CC.RED + "Please wait until the Grace period is over.");
         }
     }
 
-    @EventHandler
-    public void onPlayerDamage(EntityDamageEvent event) {
-        if (!(event.getEntity() instanceof Player)) {
-            return;
-        }
-
-        Player victim = (Player) event.getEntity();
-        PlayerKitProfile victimProfile = plugin.getPlayerManager().getProfile(victim);
-
-        if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
-            victim.teleport(plugin.getSpawnLocation());
-        } else if (event.getCause() == EntityDamageEvent.DamageCause.FALL && !victimProfile.isFallDamageEnabled()) {
-            event.setCancelled(true);
-            return;
-        }
-
-        if (victimProfile.getState() == PlayerState.SPAWN) {
-            event.setCancelled(true);
-        }
-    }
 
     @EventHandler
     public void onPlayerDamageByPlayer(EntityDamageByEntityEvent event) {
@@ -103,21 +79,21 @@ public class EntityListener implements Listener {
 
         Player damager = event.getDamager() instanceof Player ? (Player) event.getDamager() : (Player) ((Arrow) event.getDamager()).getShooter();
 
-        if (damager.getAllowFlight()) {
-            damager.setAllowFlight(false);
-            damager.setFlying(false);
-        }
-
-        PlayerKitProfile damagerProfile = plugin.getPlayerManager().getProfile(damager);
         Player victim = (Player) event.getEntity();
 
-        PlayerKitProfile victimProfile = plugin.getPlayerManager().getProfile(victim);
 
-        if (damagerProfile.getState() == PlayerState.SPAWN && victimProfile.getState() == PlayerState.FFA) {
-            damagerProfile.setState(PlayerState.FFA);
-            damager.sendMessage(CC.RED + "You no longer have spawn protection!");
+        PlayerProfile victimProfile = plugin.getPlayerManager().getProfile(victim);
+
+        victimProfile.setLastAttacker(damager.getUniqueId());
+        boolean died = event.getFinalDamage() >= victim.getHealth();
+        if (died) {
+            for (ItemStack armorContent : victim.getInventory().getArmorContents()) {
+                victim.getWorld().dropItemNaturally(victim.getLocation(), armorContent);
+            }
+            for (ItemStack inventoryContent : victim.getInventory().getContents()) {
+                victim.getWorld().dropItemNaturally(victim.getLocation(), inventoryContent);
+            }
+            plugin.getPlayerManager().removePlayer(victim);
         }
-
-        victimProfile.getDamageData().put(event.getDamager().getUniqueId(), event.getFinalDamage());
     }
 }

@@ -16,58 +16,12 @@
         <full.version>${project.version}-${maven.build.timestamp}</full.version>
     </properties>
 
-    <distributionManagement>
-        <repository>
-            <id>lemin-releases</id>
-            <url>${release.url}</url>
-        </repository>
-        <snapshotRepository>
-            <id>lemin-snapshots</id>
-            <url>${snapshot.url}</url>
-        </snapshotRepository>
-    </distributionManagement>
-
-    <repositories>
-        <repository>
-            <id>lemin-releases</id>
-            <url>${release.url}</url>
-        </repository>
-        <repository>
-            <id>lemin-snapshots</id>
-            <url>${snapshot.url}</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.0</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>us.lemin.leminspigot</groupId>
-            <artifactId>leminspigot</artifactId>
-            <version>1.8.8-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>us.lemin.core</groupId>
-            <artifactId>core</artifactId>
-            <version>1.0.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>tech.coords.scoreboardapi</groupId>
-            <artifactId>scoreboardapi</artifactId>
-            <version>1.0.0</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>tech.coords.inventoryapi</groupId>
-            <artifactId>inventoryapi</artifactId>
-            <version>1.0.0</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 

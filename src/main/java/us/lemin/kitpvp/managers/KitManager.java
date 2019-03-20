@@ -1,15 +1,13 @@
 package us.lemin.kitpvp.managers;
 
+import lombok.Getter;
+import us.lemin.kitpvp.ArcherGamesPlugin;
+import us.lemin.kitpvp.kit.Kit;
+import us.lemin.kitpvp.kit.impl.God;
+
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import lombok.Getter;
-import us.lemin.kitpvp.KitPvPPlugin;
-import us.lemin.kitpvp.kit.Kit;
-import us.lemin.kitpvp.kit.impl.Archer;
-import us.lemin.kitpvp.kit.impl.Fisherman;
-import us.lemin.kitpvp.kit.impl.PotPvP;
-import us.lemin.kitpvp.kit.impl.PvP;
 
 public class KitManager {
     private final Map<String, Kit> kitNames = new LinkedHashMap<>();
@@ -17,15 +15,12 @@ public class KitManager {
     @Getter
     private final Kit defaultKit;
 
-    public KitManager(KitPvPPlugin plugin) {
+    public KitManager(ArcherGamesPlugin plugin) {
         registerKits(
-                new PvP(plugin),
-                new PotPvP(plugin),
-                new Archer(plugin),
-                new Fisherman(plugin)
+                new God(plugin)
         );
 
-        defaultKit = getKitByClass(PvP.class);
+        defaultKit = getKitByClass(God.class);
     }
 
     private void registerKits(Kit... kits) {

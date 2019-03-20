@@ -1,10 +1,11 @@
 package us.lemin.kitpvp.managers;
 
+import org.bukkit.entity.Player;
+import us.lemin.kitpvp.util.structure.RegionData;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import org.bukkit.entity.Player;
-import us.lemin.kitpvp.util.structure.RegionData;
 
 public class RegionManager {
     private final Map<UUID, RegionData> regionData = new HashMap<>();

@@ -1,5 +1,5 @@
 name: ${project.name}
 version: ${full.version}
 author: Coords
-main: us.lemin.kitpvp.KitPvPPlugin
+main: us.lemin.kitpvp.ArcherGamesPlugin
 depend: [Core]

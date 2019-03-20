@@ -1,6 +1,5 @@
 package us.lemin.kitpvp;
 
-import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -13,46 +12,38 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import tech.coords.inventoryapi.InventoryManager;
-import tech.coords.scoreboardapi.ScoreboardApi;
+import org.bukkit.scheduler.BukkitTask;
+import us.lemin.core.api.inventoryapi.InventoryManager;
+import us.lemin.core.api.scoreboardapi.ScoreboardApi;
 import us.lemin.core.storage.flatfile.Config;
-import us.lemin.kitpvp.commands.ClearKitCommand;
 import us.lemin.kitpvp.commands.HelpCommand;
 import us.lemin.kitpvp.commands.KitCommand;
-import us.lemin.kitpvp.commands.SpawnCommand;
-import us.lemin.kitpvp.commands.StatisticsCommand;
-import us.lemin.kitpvp.commands.admin.EditRegionCommand;
 import us.lemin.kitpvp.commands.admin.SetSpawnCommand;
-import us.lemin.kitpvp.commands.events.EventCommand;
-import us.lemin.kitpvp.inventory.KitSelectorWrapper;
-import us.lemin.kitpvp.listeners.EntityListener;
-import us.lemin.kitpvp.listeners.InventoryListener;
-import us.lemin.kitpvp.listeners.PlayerListener;
-import us.lemin.kitpvp.listeners.RegionListener;
-import us.lemin.kitpvp.listeners.WorldListener;
-import us.lemin.kitpvp.managers.EventManager;
+import us.lemin.kitpvp.inventory.ShopWrapper;
+import us.lemin.kitpvp.listeners.*;
 import us.lemin.kitpvp.managers.KitManager;
 import us.lemin.kitpvp.managers.PlayerManager;
-import us.lemin.kitpvp.managers.RegionManager;
-import us.lemin.kitpvp.scoreboard.KitPvPAdapter;
+import us.lemin.kitpvp.managers.ServerManager;
+import us.lemin.kitpvp.managers.ShopManager;
+import us.lemin.kitpvp.scoreboard.AGAdapter;
+import us.lemin.kitpvp.tasks.StageTask;
 import us.lemin.kitpvp.util.structure.Cuboid;
 
-@Getter
-public class KitPvPPlugin extends JavaPlugin {
+public class ArcherGamesPlugin extends JavaPlugin {
     private Config locationConfig;
 
     @Setter
     private Location spawnLocation;
-    @Setter
-    private Cuboid spawnCuboid;
 
     private PlayerManager playerManager;
     private KitManager kitManager;
     private InventoryManager inventoryManager;
-    private RegionManager regionManager;
-    private EventManager eventManager;
+    private ServerManager serverManager;
+    private ShopManager shopManager;
 
     private ScoreboardApi scoreboardApi;
+
+    private BukkitTask stageTask;
 
     private void registerSerializableClass(Class<?> clazz) {
         if (ConfigurationSerializable.class.isAssignableFrom(clazz)) {
@@ -74,41 +65,34 @@ public class KitPvPPlugin extends JavaPlugin {
         locationConfig.copyDefaults();
 
         spawnLocation = locationConfig.getLocation("spawn");
-        spawnCuboid = (Cuboid) locationConfig.get("spawn-cuboid");
 
         playerManager = new PlayerManager(this);
         kitManager = new KitManager(this);
         inventoryManager = new InventoryManager(this);
-        inventoryManager.registerWrapper(new KitSelectorWrapper(this));
-        regionManager = new RegionManager();
-        eventManager = new EventManager(this);
+        inventoryManager.registerPlayerWrapper(new ShopWrapper(this));
+        serverManager = new ServerManager(this);
+        shopManager = new ShopManager(this);
 
-        scoreboardApi = new ScoreboardApi(this, new KitPvPAdapter(this));
+        scoreboardApi = new ScoreboardApi(this, new AGAdapter(this));
 
         registerCommands(
-                new StatisticsCommand(this),
                 new KitCommand(this),
-                new ClearKitCommand(this),
                 new HelpCommand(),
-                new SetSpawnCommand(this),
-                new EditRegionCommand(this),
-                new SpawnCommand(this),
-                new EventCommand(this)
+                new SetSpawnCommand(this)
         );
         registerListeners(
                 new PlayerListener(this),
                 new WorldListener(),
                 new InventoryListener(),
                 new EntityListener(this),
-                new RegionListener(this)
+                new SpectatorListener(this)
         );
 
         disableGameRules(mainWorld,
-                "doDaylightCycle",
                 "doFireTick",
-                "doMobSpawning",
-                "showDeathMessages"
+                "doMobSpawning"
         );
+        stageTask = new StageTask(this).runTaskTimer(this, 20 * 120, 20 * 120);
     }
 
     @Override
@@ -147,5 +131,37 @@ public class KitPvPPlugin extends JavaPlugin {
         for (String gameRule : gameRules) {
             world.setGameRuleValue(gameRule, "false");
         }
+    }
+
+    public PlayerManager getPlayerManager() {
+        return this.playerManager;
+    }
+
+    public ServerManager getServerManager() {
+        return serverManager;
+    }
+
+    public KitManager getKitManager() {
+        return kitManager;
+    }
+
+    public ShopManager getShopManager() {
+        return shopManager;
+    }
+
+    public InventoryManager getInventoryManager() {
+        return inventoryManager;
+    }
+
+    public Config getLocationConfig() {
+        return locationConfig;
+    }
+
+    public void setSpawnLocation(Location spawnLocation) {
+        this.spawnLocation = spawnLocation;
+    }
+
+    public Location getSpawnLocation() {
+        return spawnLocation;
     }
 }

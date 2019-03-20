@@ -5,12 +5,12 @@ import org.bukkit.entity.Player;
 import us.lemin.core.commands.PlayerCommand;
 import us.lemin.core.player.rank.Rank;
 import us.lemin.core.utils.message.CC;
-import us.lemin.kitpvp.KitPvPPlugin;
+import us.lemin.kitpvp.ArcherGamesPlugin;
 
 public class SetSpawnCommand extends PlayerCommand {
-    private final KitPvPPlugin plugin;
+    private final ArcherGamesPlugin plugin;
 
-    public SetSpawnCommand(KitPvPPlugin plugin) {
+    public SetSpawnCommand(ArcherGamesPlugin plugin) {
         super("setspawn", Rank.ADMIN);
         this.plugin = plugin;
     }

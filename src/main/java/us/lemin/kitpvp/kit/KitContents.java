@@ -1,35 +1,57 @@
 package us.lemin.kitpvp.kit;
 
 import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class KitContents {
+    public KitContents(ItemStack[] armor, ItemStack[] contents) {
+        this.armor = armor;
+        this.contents = contents;
+    }
+
     private final ItemStack[] armor;
     private final ItemStack[] contents;
+
 
     public static Builder newBuilder() {
         return new Builder();
     }
 
     void apply(Player player) {
-        PlayerInventory inventory = player.getInventory();
-
-        inventory.clear();
-        inventory.setArmorContents(null);
-
-        inventory.setArmorContents(armor.clone());
-        inventory.setContents(contents.clone());
-
+        addToInventory(player);
         player.updateInventory();
     }
 
-    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+
+    private void addToInventory(Player player) {
+        PlayerInventory inventory = player.getInventory();
+        ItemStack[] armorContents = inventory.getArmorContents();
+        boolean droppedItems = false;
+        checkContents(player, armorContents);
+        inventory.setArmorContents(null);
+        inventory.setArmorContents(this.armor.clone());
+        checkContents(player, contents);
+    }
+
+    private void checkContents(Player player, ItemStack[] itemStacks) {
+        Inventory inventory = player.getInventory();
+        boolean droppedItems;
+        for (ItemStack itemStack : itemStacks) {
+            if (inventory.firstEmpty() == -1) {
+                player.getWorld().dropItemNaturally(player.getLocation(), itemStack);
+                droppedItems = true;
+            } else {
+                inventory.setItem(inventory.firstEmpty(), itemStack);
+            }
+        }
+    }
+
     public static class Builder {
         private final ItemStack[] armor = new ItemStack[4];
         private final ItemStack[] contents = new ItemStack[36];
@@ -78,6 +100,7 @@ public class KitContents {
                 }
             }
         }
+
 
         KitContents build() {
             fillBlank(armor);

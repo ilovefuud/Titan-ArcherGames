@@ -6,7 +6,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.weather.WeatherChangeEvent;
 
 public class WorldListener implements Listener {
 
@@ -30,12 +29,5 @@ public class WorldListener implements Listener {
         }
 
         event.setCancelled(true);
-    }
-
-    @EventHandler
-    public void onRain(WeatherChangeEvent event) {
-        if (event.toWeatherState()) {
-            event.setCancelled(true);
-        }
     }
 }
