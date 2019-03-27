@@ -19,7 +19,6 @@ import rip.titan.archergames.listeners.EntityListener;
 import rip.titan.archergames.listeners.PlayerListener;
 import rip.titan.archergames.listeners.SpectatorListener;
 import rip.titan.archergames.listeners.WorldListener;
-import rip.titan.archergames.managers.KitManager;
 import rip.titan.archergames.managers.PlayerManager;
 import rip.titan.archergames.managers.ServerManager;
 import rip.titan.archergames.managers.ShopManager;
@@ -37,7 +36,6 @@ public class ArcherGamesPlugin extends JavaPlugin {
     private static ArcherGamesPlugin instance;
 
     private PlayerManager playerManager;
-    private KitManager kitManager;
     private InventoryManager inventoryManager;
     private ServerManager serverManager;
     private ShopManager shopManager;
@@ -57,7 +55,6 @@ public class ArcherGamesPlugin extends JavaPlugin {
         registerSerializableClass(Cuboid.class);
 
         playerManager = new PlayerManager(this);
-        kitManager = new KitManager();
         inventoryManager = new InventoryManager(this);
         inventoryManager.registerPlayerWrapper(new ShopWrapper(this));
         serverManager = new ServerManager(this);

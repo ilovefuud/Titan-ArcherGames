@@ -23,7 +23,7 @@ public class ShopManager {
     public ShopManager(ArcherGamesPlugin plugin) {
         this.plugin = plugin;
         registerEntries(
-                new ShopKit(plugin.getKitManager().getKitByClass(God.class), 100),
+                new ShopKit(new God(), 100),
                 new ShopItem(new ItemBuilder(Material.GOLDEN_APPLE).name("God Apple").durability(1).build(), 500),
                 new ShopItem(Material.DIAMOND_SWORD, 100),
                 new ShopItem(Material.DIAMOND_HELMET, 100),
