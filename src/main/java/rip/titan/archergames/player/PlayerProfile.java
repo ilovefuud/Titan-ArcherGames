@@ -1,12 +1,14 @@
 package rip.titan.archergames.player;
 
+import lombok.Getter;
+import lombok.Setter;
 import rip.titan.archergames.ArcherGamesPlugin;
 import us.lemin.core.CorePlugin;
-import us.lemin.core.player.CoreProfile;
 import us.lemin.core.storage.database.MongoRequest;
 
 import java.util.UUID;
-
+@Getter
+@Setter
 public class PlayerProfile {
     private final UUID id;
     private final String name;
@@ -16,10 +18,9 @@ public class PlayerProfile {
     private int credits;
 
 
-    public PlayerProfile(ArcherGamesPlugin plugin, UUID id, String name) {
+    public PlayerProfile(UUID id, String name) {
         this.id = id;
         this.name = name;
-        CoreProfile coreProfile = CorePlugin.getInstance().getProfileManager().getProfile(id);
 
         CorePlugin.getInstance().getMongoStorage().getOrCreateDocument("archergames", id, (document, found) -> {
             if (found) {
@@ -37,9 +38,7 @@ public class PlayerProfile {
     public void save(boolean async, ArcherGamesPlugin plugin) {
         Runnable runnable = () -> {
             MongoRequest request = MongoRequest.newRequest("archergames", id)
-                    .put("kills", getKills())
                     .put("credits", getCredits());
-
             request.run();
         };
 
@@ -50,43 +49,11 @@ public class PlayerProfile {
         }
     }
 
-    public void setGodKit(boolean godKit) {
-        this.godKit = godKit;
-    }
-
-    public boolean hasGodKit() {
-        return this.godKit;
-    }
-
-    public void setLastAttacker(UUID lastAttacker) {
-        this.lastAttacker = lastAttacker;
-    }
-
-    public UUID getLastAttacker() {
-        return lastAttacker;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public int getCredits() {
-        return credits;
-    }
-
-    public void addCredits(int increasedBy) {
-        this.credits = this.credits + increasedBy;
-    }
-
-    public int getKills() {
-        return kills;
-    }
-
     public void handleKill() {
-        this.credits++;
+        this.kills++;
     }
+
+    public void removeCredits(int removedAmount) {this.credits = this.credits - removedAmount;}
+
+    public void addCredits(int addedAmount) {this.credits = this.credits + addedAmount;}
 }
