@@ -1,3 +1,3 @@
-# KitPvP
+# ArcherGames
 
-The KitPvP plugin for Lemin.
+The ArcherGames plugin for Titan.
